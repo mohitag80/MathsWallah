@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mathswallah
+  namespace: mathswallah
+  labels:
+    app: mathswallah
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mathswallah
+  template:
+    metadata:
+      labels:
+        app: mathswallah
+    spec:
+      containers:
+      - name: mathswallah
+        # For local k3s usage build the image on the k3s node and use imagePullPolicy IfNotPresent.
+        image: mohitag80/mathswallah:1.0.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8000
+          initialDelaySeconds: 15
+          periodSeconds: 20
